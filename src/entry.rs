@@ -95,7 +95,7 @@ pub struct EntryRenderData<'a> {
 }
 
 impl EntryRenderData<'_> {
-    pub fn from_entry<T: AsRef<str>>(entry: &Entry, search_query: T) -> EntryRenderData {
+    pub fn from_entry<T: AsRef<str>>(entry: &Entry, search_query: T) -> EntryRenderData<'_> {
         // Since our "search"/"filter" is case insensitive, and our for entries are always in lower
         // case, we need to make sure that the character we use for `illegal_char_for_hotkey` is
         // lowercase as well
