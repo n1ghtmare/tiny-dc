@@ -156,19 +156,18 @@ impl DirectoryIndex {
     /// occurs.
     ///
     /// The inner workings of this algo was heavily inspured by `rupa/z: https://github.com/rupa/z
-    pub fn z(&mut self, query: &str) -> anyhow::Result<Option<PathBuf>> {
+    pub fn z(&mut self, queries: Vec<String>) -> anyhow::Result<Option<PathBuf>> {
         let mut matches = Vec::new();
-        let query_lower = query.to_lowercase();
 
         for (path, stats) in &self.data {
             let path_str = path.to_string_lossy();
             let frecent_score = stats.frecent_score();
 
-            if path_str.contains(query) {
+            if queries.iter().all(|q| path_str.contains(q)) {
                 // Higher priority: case-sensitive match.
-                matches.push((path.clone(), frecent_score, 0));
-            } else if path_str.to_lowercase().contains(&query_lower) {
-                // Lower priority: case-insensitive match.
+                matches.push((path.clone(), frecent_score, 0))
+            } else if queries.iter().all(|q| path_str.to_lowercase().contains(q)) {
+                // Lower priority: case-insentitive match.
                 matches.push((path.clone(), frecent_score, 1));
             }
         }

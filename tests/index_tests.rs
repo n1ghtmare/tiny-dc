@@ -37,7 +37,81 @@ fn directory_index_z_returns_correct_result() {
     }
 
     let mut directory_index = DirectoryIndex::try_from(index_file_path.clone()).unwrap();
-    let result = directory_index.z("test").unwrap();
+    let result = directory_index.z(vec!["test".into()]).unwrap();
+
+    assert_eq!(result, Some(temp_test_dir_other.to_str().unwrap().into()));
+}
+
+#[test]
+fn directory_index_z_returns_correct_result_for_case_sensitive_query() {
+    let temp_dir = tempfile::tempdir().unwrap();
+
+    // Create temporary directory inside the temp directory
+    let temp_test_dir = temp_dir.path().join("Test_Dir");
+    std::fs::create_dir_all(&temp_test_dir).unwrap();
+
+    // Create temporary directory inside the temp directory
+    let temp_test_dir_other = temp_dir.path().join("test_dir_other");
+    std::fs::create_dir_all(&temp_test_dir_other).unwrap();
+
+    // Create temporary directory inside the temp directory
+    let temp_other_dir = temp_dir.path().join("other_dir");
+    std::fs::create_dir_all(&temp_other_dir).unwrap();
+
+    let index_file_path = temp_dir.path().join(".tiny-dc");
+
+    let mut file = File::create(&index_file_path).unwrap();
+
+    let mock_data = vec![
+        (temp_test_dir.to_str().unwrap(), 100, 100),
+        (temp_test_dir_other.to_str().unwrap(), 150, 100),
+        (temp_other_dir.to_str().unwrap(), 100, 100),
+    ];
+
+    for line in mock_data {
+        writeln!(file, "{}|{}|{}\n", line.0, line.1, line.2).unwrap();
+    }
+
+    let mut directory_index = DirectoryIndex::try_from(index_file_path.clone()).unwrap();
+    let result = directory_index.z(vec!["Test".into()]).unwrap();
+
+    assert_eq!(result, Some(temp_test_dir.to_str().unwrap().into()));
+}
+
+#[test]
+fn directory_index_z_returns_correct_result_for_multiple_queries() {
+    let temp_dir = tempfile::tempdir().unwrap();
+
+    // Create temporary directory inside the temp directory
+    let temp_test_dir = temp_dir.path().join("test_dir");
+    std::fs::create_dir_all(&temp_test_dir).unwrap();
+
+    // Create temporary directory inside the temp directory
+    let temp_test_dir_other = temp_dir.path().join("test_dir_other");
+    std::fs::create_dir_all(&temp_test_dir_other).unwrap();
+
+    // Create temporary directory inside the temp directory
+    let temp_other_dir = temp_dir.path().join("other_dir");
+    std::fs::create_dir_all(&temp_other_dir).unwrap();
+
+    let index_file_path = temp_dir.path().join(".tiny-dc");
+
+    let mut file = File::create(&index_file_path).unwrap();
+
+    let mock_data = vec![
+        (temp_test_dir.to_str().unwrap(), 100, 100),
+        (temp_test_dir_other.to_str().unwrap(), 150, 100),
+        (temp_other_dir.to_str().unwrap(), 100, 100),
+    ];
+
+    for line in mock_data {
+        writeln!(file, "{}|{}|{}\n", line.0, line.1, line.2).unwrap();
+    }
+
+    let mut directory_index = DirectoryIndex::try_from(index_file_path.clone()).unwrap();
+    let result = directory_index
+        .z(vec!["other".into(), "test".into()])
+        .unwrap();
 
     assert_eq!(result, Some(temp_test_dir_other.to_str().unwrap().into()));
 }
@@ -76,7 +150,7 @@ fn directory_index_z_returns_existing_path_only() {
     }
 
     let mut directory_index = DirectoryIndex::try_from(index_file_path.clone()).unwrap();
-    let result = directory_index.z("test").unwrap();
+    let result = directory_index.z(vec!["test".into()]).unwrap();
 
     assert_eq!(result, Some(temp_test_dir.to_str().unwrap().into()));
 }
@@ -112,7 +186,7 @@ fn directory_index_z_returns_none_for_no_match() {
     }
 
     let mut directory_index = DirectoryIndex::try_from(index_file_path.clone()).unwrap();
-    let result = directory_index.z("non-existent").unwrap();
+    let result = directory_index.z(vec!["non-existent".into()]).unwrap();
 
     assert_eq!(result, None);
 }
@@ -149,7 +223,7 @@ fn directory_index_z_returns_correct_result_for_common_parent() {
 
     // Load the index and query for the common parent.
     let mut directory_index = DirectoryIndex::try_from(index_file_path.clone()).unwrap();
-    let result = directory_index.z("common").unwrap();
+    let result = directory_index.z(vec!["common".into()]).unwrap();
 
     // Assert that the common parent is returned even if a subdirectory has a higher rank.
     assert_eq!(result, Some(common_parent.to_str().unwrap().into()),);
@@ -161,7 +235,7 @@ fn directory_index_z_returns_none_for_empty_index() {
     let index_file_path = temp_dir.path().join(".tiny-dc");
 
     let mut directory_index = DirectoryIndex::try_from(index_file_path.clone()).unwrap();
-    let result = directory_index.z("nonexistent").unwrap();
+    let result = directory_index.z(vec!["nonexistent".into()]).unwrap();
 
     assert_eq!(result, None);
 }

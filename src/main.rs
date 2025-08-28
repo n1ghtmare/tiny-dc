@@ -31,7 +31,7 @@ enum DirectoryCommand {
     Push { path: PathBuf },
     /// Prints the path of the first indexed directory matching the query (intended to be used with
     /// shell integration), if no match is found, the current directory is printed
-    Z { query: String },
+    Z { queries: Vec<String> },
 }
 
 fn main() -> anyhow::Result<()> {
@@ -53,8 +53,8 @@ fn main() -> anyhow::Result<()> {
             DirectoryCommand::Push { path } => {
                 directory_index.push(path)?;
             }
-            DirectoryCommand::Z { query } => {
-                if let Some(path) = directory_index.z(&query)? {
+            DirectoryCommand::Z { queries } => {
+                if let Some(path) = directory_index.z(queries)? {
                     println!("{}", path.display());
                 } else {
                     // If we didn't find any matches, we want to print the current directory
