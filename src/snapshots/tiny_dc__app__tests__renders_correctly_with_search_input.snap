@@ -3,7 +3,7 @@ source: src/app.rs
 expression: terminal.backend()
 snapshot_kind: text
 ---
-"                                 Tiny DC v0.1.2                                 "
+"                                 Tiny DC v0.1.4                                 "
 "|> /home/user                                                                   "
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓"
 "┃>.git/  a                                                                     ┃"

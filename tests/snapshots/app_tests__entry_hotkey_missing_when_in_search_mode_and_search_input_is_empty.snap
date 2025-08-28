@@ -3,7 +3,7 @@ source: tests/app_tests.rs
 expression: terminal.backend()
 snapshot_kind: text
 ---
-"                                 Tiny DC v0.1.2                                 "
+"                                 Tiny DC v0.1.4                                 "
 "|> /tmp/tiny_dc_jump_search_1                                                   "
 "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓"
 "┃>sub_dir/                                                                     ┃"
